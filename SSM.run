@@ -1,0 +1,36 @@
+#!/bin/bash
+#SBATCH -q serial
+#SBATCH -e ./job-%N-%j.error
+#SBATCH -o ./job-%N-%j.out
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 10
+#SBATCH --time 2-23:10:00
+#SBATCH --mem 60G
+
+export SCR=/scratch/snyckees/
+export DAT=/home/snyckees/XTRG
+export RES=/home/snyckees/RESULTS/$SLURM_JOB_ID/
+
+echo "***** START OF JOB ***** "
+
+cd $SCR
+mkdir $SLURM_JOB_ID
+cd ./$SLURM_JOB_ID
+
+cp -a $DAT/. .
+
+module purge
+module load gcc julia
+
+echo STARTING AT `date`
+
+julia -t 10 Code_XTRG.jl
+
+echo FINISHED at `date`
+
+mkdir -p $RES
+cp -r $SCR/$SLURM_JOB_ID/Results $RES
+
+echo " ***** END OF JOB ***** "
+
