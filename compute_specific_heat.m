@@ -67,7 +67,7 @@ plot(log10(xx), log10(cv),'-')
 legend('XTRG: $\chi = 50$','analytical','Interpreter','Latex')
 title( strcat('1D XY model, N=',num2str(N)),'Interpreter','Latex')
 xlabel('log(T)','Interpreter','Latex')
-ylabel('$c_v$','Interpreter','Latex')
+ylabel('$\log(c_v)$','Interpreter','Latex')
 set(gca, 'fontsize',20)
 set(gca,'TickLabelInterpreter','latex')
 
