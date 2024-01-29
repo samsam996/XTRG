@@ -12,7 +12,6 @@ include("right2left.jl")
 
 let
 
-  ## Clearing up outputs from prevous runs
   if isdir("Results")
     rm("Results", recursive=true)
   end
@@ -55,15 +54,13 @@ let
     
     nmax = 15 # Maximum value to beta to be reached is tau_0*2^nmax
 
-    # beta_0 = beta_0/N
-    for it = 1:nmax # The loop increases tau_0
+    for it = 1:nmax 
 
       beta_0 = 2*beta_0
       print("beta =", beta_0, " ")
       
       D = 50
-      C = dag(prime(prime(rho_0))) # The initial guess for rho at 2*tau_0
-      # C = dag(C)
+      C = dag(prime(prime(rho_0))) 
       orthogonalize!(C, N)
 
       nsweep = 4 # Number recommended in PRX
@@ -85,7 +82,6 @@ let
         Z_n = Z_n*(rho_0[j]*delta(dag(sites[j]'),sites[j]))
       end
       
-      # calculating internal energy
       u = 1.0
       for j = 1:N
         u = (u*rho_0[j])*dag(ham[j])
@@ -100,12 +96,6 @@ let
       io = open("Results/beta_list.dat", "a") 
       writedlm(io,[beta_0 u free_energy])
       close(io)
-
-      # io = open("Results/data_internal_energy.dat", "a") 
-      # writedlm(io,u[])
-      # close(io)
-
-      # updating the temperature
 
     end
 
