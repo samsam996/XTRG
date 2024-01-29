@@ -39,21 +39,7 @@ let
   end
   
   osI = OpSum()
-
-  # for j=1:N
   osI += ("Id",1)
-  # end
-  
-  beta_0 = 0.03
-  # rho_0 = MPO(osI-beta_0*osH, sites)
-  # idd = MPO(osI,sites)
-  # psi = ITensor(sites)
-  # psi[1,1,1,1] = 1
-  # @show norm((psi*idd[1]*idd[2]*idd[3]*idd[4])*dag(prime(psi))) - psi*dag(psi))
-  # xx = 2
-  # xx[3] = 2
-  # @show inds(psi)
-  ## ========================================
 
   nz = 6
 
