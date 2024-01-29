@@ -9,7 +9,7 @@ function left2right(rho_0,C,N,D,sites)
 
         print(" L to R ")
         V_RR = 1.0
-        VR_table = []
+        VR_table = [] 
 
         orthogonalize!(C,1)
         for j = N:-1:3

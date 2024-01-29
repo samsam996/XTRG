@@ -19,7 +19,7 @@ let
   mkdir("Results")
 
   
-  N = 12
+  N = 4
 
   sites = siteinds( "S=1/2", N, conserve_qns=true)
 
@@ -40,16 +40,18 @@ let
   
   osI = OpSum()
 
-  for j=1:N
-    osI += ("Id",j)
-  end
+  # for j=1:N
+  osI += ("Id",1)
+  # end
   
-  # beta_0 = 0.03
+  beta_0 = 0.03
   # rho_0 = MPO(osI-beta_0*osH, sites)
   # idd = MPO(osI,sites)
-  # psi = randomITensor(sites)
-  # @show norm((psi*idd[1]*idd[2]*idd[3]*idd[4])*dag(prime(psi))/4 - psi*dag(psi))
-  
+  # psi = ITensor(sites)
+  # psi[1,1,1,1] = 1
+  # @show norm((psi*idd[1]*idd[2]*idd[3]*idd[4])*dag(prime(psi))) - psi*dag(psi))
+  # xx = 2
+  # xx[3] = 2
   # @show inds(psi)
   ## ========================================
 
@@ -61,9 +63,10 @@ let
 
     tau_0 = 1e-3
     beta_0 = (2.0^(iz/(nz-1)))*tau_0
-    rho_0 = MPO(osI/N-beta_0*osH, sites)
+    rho_0 = MPO(osI-beta_0*osH, sites)
     ham = MPO(osH,sites)
-
+    free_energy = 0
+    
     nmax = 15 # Maximum value to beta to be reached is tau_0*2^nmax
 
     # beta_0 = beta_0/N
@@ -102,7 +105,7 @@ let
         u = (u*rho_0[j])*dag(ham[j])
       end
 
-      free_energy =  log(Z_n[])
+      free_energy +=  log(Z_n[])
 
       u = u[]/Z_n[]/N
 
