@@ -5,6 +5,7 @@ function right2left(rho_0,C,N,D,sites)
 
     print(" R to L ")
 
+    fe = 0
     V_LL = 1.0
     VL_table = []
 
@@ -51,7 +52,7 @@ function right2left(rho_0,C,N,D,sites)
       end
 
       
-      
+      fe = log(norm(S))
       S = S/norm(S) 
 
     
@@ -67,7 +68,8 @@ function right2left(rho_0,C,N,D,sites)
 
     end
 
+    fe = fe/(N-1)
 
-    return C, rho_0
+    return C, rho_0, fe
 
 end

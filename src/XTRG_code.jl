@@ -1,16 +1,11 @@
-using ITensors
-using DelimitedFiles
-using ITensors.HDF5
-using LinearAlgebra
-using CSV
-using DataFrames
-using MAT
 
 
 include("left2right.jl")
 include("right2left.jl")
 
-let
+@show Threads.nthreads()
+
+function XTRG(N, D, nz, nmax, tau_0)
 
   if isdir("Results")
     rm("Results", recursive=true)
@@ -18,16 +13,15 @@ let
   mkdir("Results")
 
   
-  N = 4
-
   sites = siteinds( "S=1/2", N, conserve_qns=true)
 
   
   ## ========= constructing the Hamiltonian ==================================
  
   osH = OpSum()
+  
+  
   J1 = 1.
-
   ## reading from file 
   # nn = readdlm("bondsN"*string(N)*".dat", Int)
   
@@ -40,42 +34,44 @@ let
   osI = OpSum()
   osI += ("Id",1)
 
-  nz = 6
+
+  #####
+
+  # nz = 10
 
   for iz = 0:nz-1
 
-    ## ===== constructing the density matrix MPO, rho_0, at tau_0=beta_0/2 ====
+    ## ===== constructing the density matrix MPO, rho_0, at tau_0=beta_0/2 =====
 
-    tau_0 = 1e-3
+    free_energy = 0
     beta_0 = (2.0^(iz/(nz-1)))*tau_0
     rho_0 = MPO(osI-beta_0*osH, sites)
     ham = MPO(osH,sites)
-    free_energy = 0
     
-    nmax = 15 # Maximum value to beta to be reached is tau_0*2^nmax
+    # nmax = 20 # Maximum value to beta to be reached is tau_0*2^nmax
 
     for it = 1:nmax 
 
       beta_0 = 2*beta_0
       print("beta =", beta_0, " ")
       
-      D = 50
       C = dag(prime(prime(rho_0))) 
       orthogonalize!(C, N)
 
+      free_energy = 2*free_energy
       nsweep = 4 # Number recommended in PRX
 
+      fe = 0;
       for isweep = 1:nsweep
 
         C, rho_0 = left2right(rho_0,C,N,D,sites)
-        C, rho_0 = right2left(rho_0,C,N,D,sites)
+        C, rho_0, fe = right2left(rho_0,C,N,D,sites)
 
       end 
 
       for j = 1:N
         rho_0[j]=(dag(C[j])*delta(dag(sites[j]'''),sites[j]'))*delta(sites[j]'',dag(sites[j]))
       end
-
 
       Z_n = 1.0
       for j = 1:N
@@ -87,7 +83,7 @@ let
         u = (u*rho_0[j])*dag(ham[j])
       end
 
-      free_energy +=  log(Z_n[])
+      free_energy = free_energy + log(Z_n[]) + fe
 
       u = u[]/Z_n[]/N
 
